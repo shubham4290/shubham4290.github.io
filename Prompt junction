@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompts Junction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #4f46e5;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        [id] {
+            scroll-margin-top: 80px;
+        }
+        /* Style for the active navigation link */
+        .nav-link.active {
+            color: white;
+            background-color: #374151; /* bg-gray-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Header -->
+    <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-700">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold gradient-text nav-link" data-page="home">Prompts Junction</a>
+                </div>
+                <div class="hidden md:block">
+                    <nav class="flex items-center space-x-4">
+                        <!-- Images Dropdown -->
+                        <div class="relative">
+                            <button id="desktop-images-button" class="nav-link flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors" data-page="images">
+                                <span>Images</span>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="desktop-images-dropdown" class="absolute left-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20 hidden">
+                                <a href="#" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" data-page="images" data-anchor="images-scifi">Sci-Fi</a>
+                                <a href="#" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" data-page="images" data-anchor="images-fantasy">Fantasy</a>
+                                <a href="#" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" data-page="images" data-anchor="images-photography">Photography</a>
+                            </div>
+                        </div>
+                        <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors" data-page="videos">Videos</a>
+                        <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors" data-page="technical">Technical</a>
+                        <button class="share-prompt-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105">
+                            Share Prompt
+                        </button>
+                    </nav>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <!-- Mobile Images Dropdown -->
+                <div>
+                    <button id="mobile-images-button" class="w-full text-left flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                        <span>Images</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-images-dropdown" class="pl-4 mt-1 space-y-1 hidden">
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" data-page="images" data-anchor="images-scifi">Sci-Fi</a>
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" data-page="images" data-anchor="images-fantasy">Fantasy</a>
+                        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white" data-page="images" data-anchor="images-photography">Photography</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" data-page="videos">Videos</a>
+                <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" data-page="technical">Technical</a>
+                 <button class="share-prompt-btn w-full text-left bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg mt-2">
+                    Share Prompt
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Home Page -->
+        <main id="page-home">
+            <section class="text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4">
+                    The <span class="gradient-text">Ultimate Hub</span> for AI Prompts
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-12">
+                    Discover, share, and generate amazing results with our curated collection of prompts for images, videos, web development, and more.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-800 p-6 rounded-lg text-center">
+                        <h3 class="text-2xl font-bold mb-2 gradient-text">Image Prompts</h3>
+                        <p class="text-gray-400 mb-4">Spark your visual creativity with prompts for every style.</p>
+                        <a href="#" class="nav-link font-bold text-indigo-400 hover:underline" data-page="images">Explore Images →</a>
+                    </div>
+                     <div class="bg-gray-800 p-6 rounded-lg text-center">
+                        <h3 class="text-2xl font-bold mb-2 gradient-text">Video Prompts</h3>
+                        <p class="text-gray-400 mb-4">Get ideas for stunning cinematic shots and animations.</p>
+                        <a href="#" class="nav-link font-bold text-pink-400 hover:underline" data-page="videos">Explore Videos →</a>
+                    </div>
+                     <div class="bg-gray-800 p-6 rounded-lg text-center">
+                        <h3 class="text-2xl font-bold mb-2 gradient-text">Technical Prompts</h3>
+                        <p class="text-gray-400 mb-4">Build your next project with coding and scripting prompts.</p>
+                        <a href="#" class="nav-link font-bold text-teal-400 hover:underline" data-page="technical">Explore Technical →</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Images Page -->
+        <main id="page-images" class="hidden">
+            <section class="mb-16">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold border-l-4 border-indigo-500 pl-4">Image Prompts</h2>
+                    <button class="generate-idea-btn bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105" data-type="image">
+                        ✨ Generate Idea
+                    </button>
+                </div>
+                
+                <!-- Sci-Fi Category -->
+                <div id="images-scifi" class="mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-indigo-400">Sci-Fi</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                            <div class="p-6">
+                                <p class="text-gray-300 mb-4 h-24">A cinematic shot of a lone astronaut standing on a vibrant, alien planet with two suns setting on the horizon, detailed, 8k, photorealistic.</p>
+                                <div class="flex justify-between items-center"><span class="text-xs text-indigo-400 bg-gray-700 px-2 py-1 rounded-full">Sci-Fi</span><button class="copy-btn bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="A cinematic shot of a lone astronaut standing on a vibrant, alien planet with two suns setting on the horizon, detailed, 8k, photorealistic.">Copy</button></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                            <div class="p-6">
+                                <p class="text-gray-300 mb-4 h-24">A neon-drenched cyberpunk city street at night, rain reflecting the glowing signs, flying vehicles whizzing by, Blade Runner aesthetic.</p>
+                                <div class="flex justify-between items-center"><span class="text-xs text-indigo-400 bg-gray-700 px-2 py-1 rounded-full">Sci-Fi</span><button class="copy-btn bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="A neon-drenched cyberpunk city street at night, rain reflecting the glowing signs, flying vehicles whizzing by, Blade Runner aesthetic.">Copy</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fantasy Category -->
+                <div id="images-fantasy" class="mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-pink-400">Fantasy</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                            <div class="p-6">
+                                <p class="text-gray-300 mb-4 h-24">An enchanted forest at night, glowing mushrooms illuminate a hidden path, fireflies dancing in the air, fantasy, detailed, magical, high-contrast.</p>
+                                <div class="flex justify-between items-center"><span class="text-xs text-pink-400 bg-gray-700 px-2 py-1 rounded-full">Fantasy</span><button class="copy-btn bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="An enchanted forest at night, glowing mushrooms illuminate a hidden path, fireflies dancing in the air, fantasy, detailed, magical, high-contrast.">Copy</button></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                            <div class="p-6">
+                                <p class="text-gray-300 mb-4 h-24">A majestic dragon with iridescent scales perched atop a craggy mountain peak, storm clouds gathering in the background, epic fantasy art.</p>
+                                <div class="flex justify-between items-center"><span class="text-xs text-pink-400 bg-gray-700 px-2 py-1 rounded-full">Fantasy</span><button class="copy-btn bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="A majestic dragon with iridescent scales perched atop a craggy mountain peak, storm clouds gathering in the background, epic fantasy art.">Copy</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photography Category -->
+                <div id="images-photography">
+                    <h3 class="text-2xl font-bold mb-6 text-gray-400">Photography</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                            <div class="p-6">
+                                <p class="text-gray-300 mb-4 h-24">A minimalist black and white photograph of a single raindrop hitting a calm lake, creating perfect ripples, macro photography, high-speed shutter.</p>
+                                <div class="flex justify-between items-center"><span class="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded-full">Photography</span><button class="copy-btn bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="A minimalist black and white photograph of a single raindrop hitting a calm lake, creating perfect ripples, macro photography, high-speed shutter.">Copy</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Videos Page -->
+        <main id="page-videos" class="hidden">
+            <section class="mb-16">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold border-l-4 border-pink-500 pl-4">Video Prompts</h2>
+                    <button class="generate-idea-btn bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105" data-type="video">
+                        ✨ Generate Idea
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                     <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4 h-24">A time-lapse of a bustling city street from day to night, showing the flow of traffic and people, 4k, hyperlapse, dynamic.</p>
+                            <div class="flex justify-between items-center"><span class="text-xs text-indigo-400 bg-gray-700 px-2 py-1 rounded-full">Cityscape</span><button class="copy-btn bg-gray-700 hover:bg-pink-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="A time-lapse of a bustling city street from day to night, showing the flow of traffic and people, 4k, hyperlapse, dynamic.">Copy</button></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4 h-24">A slow-motion video of a chef expertly tossing pizza dough in a rustic kitchen, warm lighting, cinematic, food videography.</p>
+                            <div class="flex justify-between items-center"><span class="text-xs text-pink-400 bg-gray-700 px-2 py-1 rounded-full">Cooking</span><button class="copy-btn bg-gray-700 hover:bg-pink-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="A slow-motion video of a chef expertly tossing pizza dough in a rustic kitchen, warm lighting, cinematic, food videography.">Copy</button></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4 h-24">An aerial drone shot flying over a majestic mountain range at sunrise, clouds filling the valleys, epic, breathtaking, nature documentary style.</p>
+                            <div class="flex justify-between items-center"><span class="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded-full">Nature</span><button class="copy-btn bg-gray-700 hover:bg-pink-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="An aerial drone shot flying over a majestic mountain range at sunrise, clouds filling the valleys, epic, breathtaking, nature documentary style.">Copy</button></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Technical Page -->
+        <main id="page-technical" class="hidden">
+            <section class="mb-16">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold border-l-4 border-teal-500 pl-4">Technical Prompts</h2>
+                    <button class="generate-idea-btn bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105" data-type="technical">
+                        ✨ Generate Idea
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4 h-24 font-mono text-sm">Create a responsive landing page using HTML and Tailwind CSS for a fictional SaaS product. Include a hero section, features, and a pricing table.</p>
+                            <div class="flex justify-between items-center"><span class="text-xs text-indigo-400 bg-gray-700 px-2 py-1 rounded-full">Web Building</span><button class="copy-btn bg-gray-700 hover:bg-teal-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="Create a responsive landing page using HTML and Tailwind CSS for a fictional SaaS product. Include a hero section, features, and a pricing table.">Copy</button></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4 h-24 font-mono text-sm">Develop a simple 'To-Do List' application using React. The app should allow users to add, delete, and mark tasks as complete.</p>
+                            <div class="flex justify-between items-center"><span class="text-xs text-pink-400 bg-gray-700 px-2 py-1 rounded-full">App Building</span><button class="copy-btn bg-gray-700 hover:bg-teal-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="Develop a simple 'To-Do List' application using React. The app should allow users to add, delete, and mark tasks as complete.">Copy</button></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4 h-24 font-mono text-sm">Write a Python script that scrapes the headlines from a news website and saves them to a CSV file. Use libraries like BeautifulSoup and requests.</p>
+                            <div class="flex justify-between items-center"><span class="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded-full">Scripting</span><button class="copy-btn bg-gray-700 hover:bg-teal-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm" data-clipboard-text="Write a Python script that scrapes the headlines from a news website and saves them to a CSV file. Use libraries like BeautifulSoup and requests.">Copy</button></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-400">
+            <p>&copy; 2024 Prompts Junction. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Share Prompt Modal -->
+    <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-lg mx-4 relative">
+            <h3 class="text-2xl font-bold mb-4 gradient-text">Share Your Prompt Idea</h3>
+            <p class="text-gray-400 mb-6">Contribute to the community by sharing your own creative prompts.</p>
+            <textarea id="share-prompt-input" class="w-full bg-gray-700 text-white rounded-lg p-3 mb-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your prompt here..."></textarea>
+            <button id="submit-prompt-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">
+                Submit Prompt
+            </button>
+            <button id="close-share-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-white">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Gemini Generation Modal -->
+    <div id="generation-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-lg mx-4 relative">
+            <h3 id="modal-title" class="text-2xl font-bold mb-4 gradient-text">Generate an Idea</h3>
+            <p class="text-gray-400 mb-6">Enter a keyword or a simple idea, and let AI expand it into a full prompt.</p>
+            <div id="modal-input-section">
+                <input type="text" id="keyword-input" class="w-full bg-gray-700 text-white rounded-lg p-3 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 'futuristic city' or 'dragon'">
+                <p id="keyword-error" class="text-red-400 text-sm mb-4 hidden">Please enter a keyword or idea.</p>
+                <button id="generate-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Generate</button>
+            </div>
+            <div id="modal-loading-section" class="text-center py-8 hidden">
+                <div class="loader mx-auto"></div>
+                <p class="mt-4 text-gray-400">Generating your prompt...</p>
+            </div>
+            <div id="modal-result-section" class="hidden">
+                <p class="text-gray-300 mb-4 bg-gray-900 p-4 rounded-lg" id="generated-prompt-text"></p>
+                <div class="flex space-x-4">
+                    <button id="copy-generated-btn" class="flex-1 bg-gray-700 hover:bg-indigo-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors">Copy</button>
+                    <button id="generate-again-btn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors">Try Again</button>
+                </div>
+            </div>
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-white">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification for copy/submit -->
+    <div id="notification" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-300">
+        Notification Text
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Page Navigation Logic ---
+            const pages = document.querySelectorAll('main[id^="page-"]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const desktopImagesButton = document.getElementById('desktop-images-button');
+
+            function showPage(pageId, anchor = null) {
+                pages.forEach(page => page.classList.add('hidden'));
+                const targetPage = document.getElementById(`page-${pageId}`);
+                if (targetPage) targetPage.classList.remove('hidden');
+
+                navLinks.forEach(link => {
+                    const linkPage = link.dataset.page;
+                    link.classList.toggle('active', linkPage === pageId || (link.id === 'desktop-images-button' && pageId === 'images'));
+                });
+
+                if (anchor) {
+                    const targetElement = document.getElementById(anchor);
+                    if (targetElement) setTimeout(() => targetElement.scrollIntoView({ behavior: 'smooth' }), 0);
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.dataset.page;
+                    const anchorId = this.dataset.anchor;
+                    if (pageId) showPage(pageId, anchorId);
+                    if (!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+                    if (!desktopImagesDropdown.classList.contains('hidden')) desktopImagesDropdown.classList.add('hidden');
+                });
+            });
+
+            showPage('home');
+
+            // --- Dropdown Menu Logic ---
+            const desktopImagesDropdown = document.getElementById('desktop-images-dropdown');
+            desktopImagesButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                desktopImagesDropdown.classList.toggle('hidden');
+            });
+            window.addEventListener('click', () => desktopImagesDropdown.classList.add('hidden'));
+
+            // --- Mobile menu toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileImagesButton = document.getElementById('mobile-images-button');
+            const mobileImagesDropdown = document.getElementById('mobile-images-dropdown');
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            mobileImagesButton.addEventListener('click', () => mobileImagesDropdown.classList.toggle('hidden'));
+
+            // --- Notification Logic ---
+            const notification = document.getElementById('notification');
+            function showNotification(message, isSuccess = true) {
+                notification.textContent = message;
+                notification.classList.toggle('bg-green-500', isSuccess);
+                notification.classList.toggle('bg-red-500', !isSuccess);
+                notification.classList.remove('opacity-0');
+                setTimeout(() => notification.classList.add('opacity-0'), 3000);
+            }
+
+            // --- Copy to clipboard functionality ---
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            function copyText(text) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification('Prompt copied to clipboard!');
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    showNotification('Failed to copy!', false);
+                }
+                document.body.removeChild(textArea);
+            }
+            copyButtons.forEach(button => button.addEventListener('click', () => copyText(button.dataset.clipboardText)));
+
+            // --- Share Prompt Modal Logic ---
+            const shareModal = document.getElementById('share-modal');
+            const openShareModalButtons = document.querySelectorAll('.share-prompt-btn');
+            const closeShareModalButton = document.getElementById('close-share-modal-btn');
+            const submitPromptButton = document.getElementById('submit-prompt-btn');
+            const sharePromptInput = document.getElementById('share-prompt-input');
+
+            openShareModalButtons.forEach(btn => btn.addEventListener('click', () => shareModal.classList.remove('hidden')));
+            closeShareModalButton.addEventListener('click', () => shareModal.classList.add('hidden'));
+            submitPromptButton.addEventListener('click', () => {
+                const promptText = sharePromptInput.value.trim();
+                if (promptText) {
+                    console.log('Submitted Prompt:', promptText); // Placeholder for actual submission
+                    sharePromptInput.value = '';
+                    shareModal.classList.add('hidden');
+                    showNotification('Thank you for your submission!');
+                } else {
+                    showNotification('Please enter a prompt to share.', false);
+                }
+            });
+
+            // --- Gemini API Generation Modal ---
+            const generationModal = document.getElementById('generation-modal');
+            const openModalButtons = document.querySelectorAll('.generate-idea-btn');
+            const closeModalButton = document.getElementById('close-modal-btn');
+            const modalTitle = document.getElementById('modal-title');
+            const keywordInput = document.getElementById('keyword-input');
+            const keywordError = document.getElementById('keyword-error');
+            const generateBtn = document.getElementById('generate-btn');
+            const copyGeneratedBtn = document.getElementById('copy-generated-btn');
+            const generateAgainBtn = document.getElementById('generate-again-btn');
+            const generatedPromptText = document.getElementById('generated-prompt-text');
+            const inputSection = document.getElementById('modal-input-section');
+            const loadingSection = document.getElementById('modal-loading-section');
+            const resultSection = document.getElementById('modal-result-section');
+
+            let currentPromptType = 'image';
+
+            openModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentPromptType = button.dataset.type;
+                    modalTitle.textContent = `Generate an ${currentPromptType.charAt(0).toUpperCase() + currentPromptType.slice(1)} Prompt`;
+                    keywordInput.placeholder = `e.g., 'a brave knight' or 'building a weather app'`;
+                    inputSection.classList.remove('hidden');
+                    loadingSection.classList.add('hidden');
+                    resultSection.classList.add('hidden');
+                    keywordError.classList.add('hidden');
+                    keywordInput.value = '';
+                    generationModal.classList.remove('hidden');
+                });
+            });
+
+            closeModalButton.addEventListener('click', () => generationModal.classList.add('hidden'));
+            generateAgainBtn.addEventListener('click', () => {
+                inputSection.classList.remove('hidden');
+                loadingSection.classList.add('hidden');
+                resultSection.classList.add('hidden');
+                keywordError.classList.add('hidden');
+                keywordInput.value = '';
+            });
+            copyGeneratedBtn.addEventListener('click', () => copyText(generatedPromptText.textContent));
+
+            generateBtn.addEventListener('click', async () => {
+                const keyword = keywordInput.value.trim();
+                keywordError.classList.add('hidden');
+                if (!keyword) {
+                    keywordError.classList.remove('hidden');
+                    return;
+                }
+
+                inputSection.classList.add('hidden');
+                loadingSection.classList.remove('hidden');
+                resultSection.classList.add('hidden');
+
+                const systemPrompt = `You are an expert prompt generator for AI models. Generate a creative, detailed, and effective ${currentPromptType} prompt based on the user's keyword. The prompt should be a single paragraph. Do not add any preamble or explanation.`;
+                const userQuery = `Keyword: "${keyword}"`;
+                const apiKey = ""; // This will be handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                    const result = await response.json();
+                    const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (generatedText) {
+                        generatedPromptText.textContent = generatedText;
+                        loadingSection.classList.add('hidden');
+                        resultSection.classList.remove('hidden');
+                    } else {
+                        throw new Error("No content generated.");
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    generatedPromptText.textContent = "Sorry, something went wrong. Please try again.";
+                    loadingSection.classList.add('hidden');
+                    resultSection.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
